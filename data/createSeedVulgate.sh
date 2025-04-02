@@ -9,8 +9,16 @@ echo "BEGIN;" > $output_file
 # Insérer les données dans la table "translations"
 echo "
 INSERT INTO translations (code, name, language, languageCode, regionCode) VALUES
-('clementine', 'Clementine Latin Vulgate', 'Latin', 'lat', 'LAT')
+('clementine', 'Clementine Latin Vulgate', 'Latin', 'lat', 'VA')
 ON CONFLICT (code) DO NOTHING;
+" >> $output_file
+
+# Insérer les traductions des testaments
+echo "
+INSERT INTO testamentTranslations (isNewTestament, translationID, name) VALUES
+(FALSE, (SELECT id FROM translations WHERE code = 'clementine'), 'Vetus Testamentum'),
+(TRUE, (SELECT id FROM translations WHERE code = 'clementine'), 'Novum Testamentum')
+ON CONFLICT (isNewTestament, translationID) DO NOTHING;
 " >> $output_file
 
 # Fonction pour récupérer les données avec gestion des erreurs et des délais d'attente
@@ -57,7 +65,7 @@ echo "$books" | while IFS= read -r line; do
     # Insérer les traductions des livres
     echo "
     INSERT INTO bookTranslations (bookID, translationID, name) VALUES
-    ('$book_id', (SELECT id FROM translations WHERE code = 'clementine'), '$book_name - Clementine')
+    ('$book_id', (SELECT id FROM translations WHERE code = 'clementine'), '$book_name')
     ON CONFLICT (bookID, translationID) DO NOTHING;
     " >> $output_file
 
@@ -67,6 +75,7 @@ echo "$books" | while IFS= read -r line; do
     # Vérifier si la réponse est valide JSON
     if ! echo "$chapters_response" | jq empty; then
         echo "Error: Invalid JSON response for $book_name"
+        echo "Response: $chapters_response"  # Ajouter cette ligne pour afficher la réponse
         continue
     fi
 
@@ -107,27 +116,13 @@ echo "$books" | while IFS= read -r line; do
         # Vérifier si la réponse est valide JSON
         if ! echo "$response" | jq empty; then
             echo "Error: Invalid JSON response for $book_name chapter $chapter_number"
-            echo "Response: $response"
+            echo "Response: $response"  # Ajouter cette ligne pour afficher la réponse
             continue
         fi
 
-        # Insérer les chapitres dans la table "chapters"
-        echo "
-        INSERT INTO chapters (bookID, number) VALUES
-        ('$book_id', $chapter_number)
-        RETURNING id;
-        " >> $output_file
-
-        # Insérer les traductions des chapitres
-        echo "
-        INSERT INTO chapterTranslations (chapterID, translationID, name) VALUES
-        ((SELECT id FROM chapters WHERE id = (SELECT currval(pg_get_serial_sequence('chapters','id')))), (SELECT id FROM translations WHERE code = 'clementine'), '$book_name $chapter_number - Clementine')
-        ON CONFLICT (chapterID, translationID) DO NOTHING;
-        " >> $output_file
-
         # Utiliser jq pour extraire les versets et générer les instructions SQL
-        echo "$response" | jq -r --arg chapter_id "$chapter_number" --arg translation_code "clementine" '
-            .verses[] | "INSERT INTO verses (chapterID, translationID, number, text) VALUES ((SELECT id FROM chapters WHERE id = (SELECT currval(pg_get_serial_sequence('chapters','id')))), (SELECT id FROM translations WHERE code = \"\($translation_code)\"), \(.verse), \(.text | @sh)) ON CONFLICT (chapterID, translationID, number) DO NOTHING;"
+        echo "$response" | jq -r --arg book_id "$book_id" --arg chapter_number "$chapter_number" --arg translation_code "clementine" '
+        .verses[] | "INSERT INTO verses (chapterID, translationID, number, text) VALUES ((SELECT id FROM chapters WHERE bookID = \"\($book_id)\" AND number = \($chapter_number)), (SELECT id FROM translations WHERE code = \"\($translation_code)\"), \(.verse), \(.text | @sh)) ON CONFLICT (chapterID, translationID, number) DO NOTHING;"
         ' >> $output_file
     done
 done
