@@ -31,7 +31,7 @@ fetch_data() {
     for ((i=1; i<=retries; i++)); do
         response=$(curl -s "$url")
         if [[ "$response" == "Retry later" ]]; then
-            echo "Received 'Retry later' response. Retrying in $delay seconds..."
+            echo "Received 'Retry later' response. Retrying in $delay seconds..." >&2
             sleep $delay
         else
             echo "$response"
@@ -39,7 +39,7 @@ fetch_data() {
         fi
     done
 
-    echo "Error: Failed to fetch data from $url after $retries retries."
+    echo "Error: Failed to fetch data from $url after $retries retries." >&2
     return 1
 }
 
@@ -73,9 +73,9 @@ echo "$books" | while IFS= read -r line; do
     chapters_response=$(fetch_data "$book_url")
 
     # Vérifier si la réponse est valide JSON
-    if ! echo "$chapters_response" | jq empty; then
-        echo "Error: Invalid JSON response for $book_name"
-        echo "Response: $chapters_response"  # Ajouter cette ligne pour afficher la réponse
+    if ! echo "$chapters_response" | jq empty 2>/dev/null; then
+        echo "Error: Invalid JSON response for $book_name" >&2
+        echo "Response: $chapters_response" >&2  # Ajouter cette ligne pour afficher la réponse dans stderr
         continue
     fi
 
@@ -93,8 +93,8 @@ echo "$books" | while IFS= read -r line; do
         retries=5
         delay=10
         while true; do
-            response=$(curl -s "$chapter_url")
-            if [[ "$response" == "Retry later" ]]; then
+            chapter_response=$(curl -s "$chapter_url")
+            if [[ "$chapter_response" == "Retry later" ]]; then
                 echo "Received 'Retry later' response for $book_name chapter $chapter_number. Retrying in $delay seconds..."
                 sleep $delay
                 ((retries--))
@@ -108,20 +108,20 @@ echo "$books" | while IFS= read -r line; do
         done
 
         # Vérifier si la réponse est vide
-        if [ -z "$response" ]; then
+        if [ -z "$chapter_response" ]; then
             echo "Error: Empty response for $book_name chapter $chapter_number"
             continue
         fi
 
         # Vérifier si la réponse est valide JSON
-        if ! echo "$response" | jq empty; then
+        if ! echo "$chapter_response" | jq empty; then
             echo "Error: Invalid JSON response for $book_name chapter $chapter_number"
-            echo "Response: $response"  # Ajouter cette ligne pour afficher la réponse
+            echo "Response: $chapter_response"  # Ajouter cette ligne pour afficher la réponse
             continue
         fi
 
         # Utiliser jq pour extraire les versets et générer les instructions SQL
-        echo "$response" | jq -r --arg book_id "$book_id" --arg chapter_number "$chapter_number" --arg translation_code "clementine" '
+        echo "$chapter_response" | jq -r --arg book_id "$book_id" --arg chapter_number "$chapter_number" --arg translation_code "clementine" '
         .verses[] | "INSERT INTO verses (chapterID, translationID, number, text) VALUES ((SELECT id FROM chapters WHERE bookID = \"\($book_id)\" AND number = \($chapter_number)), (SELECT id FROM translations WHERE code = \"\($translation_code)\"), \(.verse), \(.text | @sh)) ON CONFLICT (chapterID, translationID, number) DO NOTHING;"
         ' >> $output_file
     done
