@@ -7,19 +7,19 @@ output_file="seedKJV.sql"
 echo "BEGIN;" > $output_file
 
 # Insérer les données dans la table "translations"
-echo "
-INSERT INTO translations (code, name, language, languageCode, regionCode) VALUES
-('kjv', 'King James Version', 'English', 'eng', 'GB')
-ON CONFLICT (code) DO NOTHING;
-" >> $output_file
+echo '
+INSERT INTO "translations" ("code", "name", "language", "languageCode", "regionCode") VALUES
+('"'"'kjv'"'"', '"'"'King James Version'"'"', '"'"'English'"'"', '"'"'eng'"'"', '"'"'GB'"'"')
+ON CONFLICT ("code") DO NOTHING;
+' >> $output_file
 
 # Insérer les traductions des testaments
-echo "
-INSERT INTO testamentTranslations (isNewTestament, translationID, name) VALUES
-(FALSE, (SELECT id FROM translations WHERE code = 'kjv'), 'Old Testament'),
-(TRUE, (SELECT id FROM translations WHERE code = 'kjv'), 'New Testament')
-ON CONFLICT (isNewTestament, translationID) DO NOTHING;
-" >> $output_file
+echo '
+INSERT INTO "testamentTranslations" ("isNewTestament", "translationID", "name") VALUES
+(FALSE, (SELECT "id" FROM "translations" WHERE "code" = '"'"'kjv'"'"'), '"'"'Old Testament'"'"'),
+(TRUE, (SELECT "id" FROM "translations" WHERE "code" = '"'"'kjv'"'"'), '"'"'New Testament'"'"')
+ON CONFLICT ("isNewTestament", "translationID") DO NOTHING;
+' >> $output_file
 
 # Fonction pour récupérer les données avec gestion des erreurs et des délais d'attente
 fetch_data() {
@@ -65,9 +65,9 @@ echo "$books" | while IFS= read -r line; do
 
     # Insérer les traductions des livres
     echo "
-    INSERT INTO bookTranslations (bookID, translationID, name) VALUES
-    ('$book_id', (SELECT id FROM translations WHERE code = 'kjv'), '$book_name')
-    ON CONFLICT (bookID, translationID) DO NOTHING;
+    INSERT INTO \"bookTranslations\" (\"bookID\", \"translationID\", \"name\") VALUES
+    ('$book_id', (SELECT \"id\" FROM \"translations\" WHERE \"code\" = 'kjv'), '$book_name')
+    ON CONFLICT (\"bookID\", \"translationID\") DO NOTHING;
     " >> $output_file
 
     # Récupérer la liste des chapitres pour chaque livre
@@ -106,9 +106,10 @@ echo "$books" | while IFS= read -r line; do
             continue
         fi
 
-        # Utiliser jq pour extraire les versets et générer les instructions SQL avec une approche différente
+        # Utiliser jq pour extraire les versets et générer les instructions SQL
+        # Remplacer les retours à la ligne par des espaces dans le texte
         echo "$chapter_response" | jq -r --arg book_id "$book_id" --arg chapter_number "$chapter_number" --arg translation_code "kjv" '
-        .verses[] | "INSERT INTO verses (chapterID, translationID, number, text) VALUES ((SELECT id FROM chapters WHERE bookID = " + ("'\''" + $book_id + "'\''") + " AND number = " + $chapter_number + "), (SELECT id FROM translations WHERE code = " + ("'\''" + $translation_code + "'\''") + "), " + (.verse | tostring) + ", " + (.text | @sh) + ") ON CONFLICT (chapterID, translationID, number) DO NOTHING;"
+        .verses[] | "INSERT INTO \"verses\" (\"chapterID\", \"translationID\", \"number\", \"text\") VALUES ((SELECT \"id\" FROM \"chapters\" WHERE \"bookID\" = " + ("'\''" + $book_id + "'\''") + " AND \"number\" = " + $chapter_number + "), (SELECT \"id\" FROM \"translations\" WHERE \"code\" = " + ("'\''" + $translation_code + "'\''") + "), " + (.verse | tostring) + ", " + ((.text | gsub("\\n"; " ") | gsub("\\r"; "")) | @sh) + ") ON CONFLICT (\"chapterID\", \"translationID\", \"number\") DO NOTHING;"
         ' >> $output_file
     done
 done
