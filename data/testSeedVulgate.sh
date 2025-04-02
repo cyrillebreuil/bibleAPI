@@ -45,13 +45,14 @@ if ! echo "$books_response" | jq empty; then
 fi
 
 # Extraire les livres et les chapitres
-books=$(echo "$books_response" | jq -r '.books[] | "\(.id) \(.name) \(.url)"')
+books=$(echo "$books_response" | jq -r '.books[] | @base64')
 
 # Lire la liste des livres et des chapitres
 echo "$books" | while IFS= read -r line; do
-    book_id=$(echo "$line" | awk '{print $1}')
-    book_name=$(echo "$line" | awk '{print $2}')
-    book_url=$(echo "$line" | awk '{print $3}')
+    book=$(echo "$line" | base64 --decode)
+    book_id=$(echo "$book" | jq -r '.id')
+    book_name=$(echo "$book" | jq -r '.name')
+    book_url=$(echo "$book" | jq -r '.url')
 
     # Insérer les livres dans la table "books"
     echo "
@@ -70,7 +71,7 @@ echo "$books" | while IFS= read -r line; do
     fi
 
     # Extraire les chapitres
-    chapters=$(echo "$chapters_response" | jq -r '.chapters[] | "\(.chapter) \(.url)"')
+    chapters=$(echo "$chapters_response" | jq -r '.chapters[] | @base64')
 
     # Insérer les traductions des livres
     echo "
@@ -80,8 +81,9 @@ echo "$books" | while IFS= read -r line; do
     " >> $output_file
 
     echo "$chapters" | while IFS= read -r chapter_line; do
-        chapter_number=$(echo "$chapter_line" | awk '{print $1}')
-        chapter_url=$(echo "$chapter_line" | awk '{print $2}')
+        chapter=$(echo "$chapter_line" | base64 --decode)
+        chapter_number=$(echo "$chapter" | jq -r '.chapter')
+        chapter_url=$(echo "$chapter" | jq -r '.url')
 
         echo "Processing $book_name chapter $chapter_number..."
 
