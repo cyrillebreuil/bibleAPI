@@ -106,9 +106,9 @@ echo "$books" | while IFS= read -r line; do
             continue
         fi
 
-        # Utiliser jq pour extraire les versets et générer les instructions SQL
+        # Utiliser jq pour extraire les versets et générer les instructions SQL avec des guillemets simples
         echo "$chapter_response" | jq -r --arg book_id "$book_id" --arg chapter_number "$chapter_number" --arg translation_code "kjv" '
-        .verses[] | "INSERT INTO verses (chapterID, translationID, number, text) VALUES ((SELECT id FROM chapters WHERE bookID = \"\($book_id)\" AND number = \($chapter_number)), (SELECT id FROM translations WHERE code = \"\($translation_code)\"), \(.verse), \(.text | @sh)) ON CONFLICT (chapterID, translationID, number) DO NOTHING;"
+        .verses[] | "INSERT INTO verses (chapterID, translationID, number, text) VALUES ((SELECT id FROM chapters WHERE bookID = \'\($book_id)\' AND number = \($chapter_number)), (SELECT id FROM translations WHERE code = \'\($translation_code)\'), \(.verse), \(.text | @sh)) ON CONFLICT (chapterID, translationID, number) DO NOTHING;"
         ' >> $output_file
     done
 done
