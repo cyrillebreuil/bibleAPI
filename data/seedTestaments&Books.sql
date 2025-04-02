@@ -1,0 +1,81 @@
+BEGIN;
+
+-- Insérer les testaments
+INSERT INTO
+	testaments (id, isNewTestament)
+VALUES
+	(1, FALSE),
+	(2, TRUE) ON CONFLICT (id) DO NOTHING;
+
+-- Insérer les livres avec les identifiants textuels et les testamentID
+INSERT INTO
+	books (id, testamentID)
+VALUES
+	('GEN', 1),
+	('EXO', 1),
+	('LEV', 1),
+	('NUM', 1),
+	('DEU', 1),
+	('JOS', 1),
+	('JDG', 1),
+	('RUT', 1),
+	('1SA', 1),
+	('2SA', 1),
+	('1KI', 1),
+	('2KI', 1),
+	('1CH', 1),
+	('2CH', 1),
+	('EZR', 1),
+	('NEH', 1),
+	('EST', 1),
+	('JOB', 1),
+	('PSA', 1),
+	('PRO', 1),
+	('ECC', 1),
+	('SNG', 1),
+	('ISA', 1),
+	('JER', 1),
+	('LAM', 1),
+	('EZK', 1),
+	('DAN', 1),
+	('HOS', 1),
+	('JOL', 1),
+	('AMO', 1),
+	('OBA', 1),
+	('JON', 1),
+	('MIC', 1),
+	('NAM', 1),
+	('HAB', 1),
+	('ZEP', 1),
+	('HAG', 1),
+	('ZEC', 1),
+	('MAL', 1),
+	('MAT', 2),
+	('MRK', 2),
+	('LUK', 2),
+	('JHN', 2),
+	('ACT', 2),
+	('ROM', 2),
+	('1CO', 2),
+	('2CO', 2),
+	('GAL', 2),
+	('EPH', 2),
+	('PHP', 2),
+	('COL', 2),
+	('1TH', 2),
+	('2TH', 2),
+	('1TI', 2),
+	('2TI', 2),
+	('TIT', 2),
+	('PHM', 2),
+	('HEB', 2),
+	('JAS', 2),
+	('1PE', 2),
+	('2PE', 2),
+	('1JN', 2),
+	('2JN', 2),
+	('3JN', 2),
+	('JUD', 2),
+	('REV', 2) ON CONFLICT (id) DO NOTHING;
+
+COMMIT;

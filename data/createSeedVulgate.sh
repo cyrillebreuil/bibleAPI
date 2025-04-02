@@ -54,11 +54,11 @@ echo "$books" | while IFS= read -r line; do
     book_name=$(echo "$book" | jq -r '.name')
     book_url=$(echo "$book" | jq -r '.url')
 
-    # Insérer les livres dans la table "books"
+    # Insérer les traductions des livres
     echo "
-    INSERT INTO books (id, testamentID) VALUES
-    ('$book_id', 1) -- Vous devrez peut-être ajuster le testamentID en fonction de votre schéma
-    ON CONFLICT (id) DO NOTHING;
+    INSERT INTO bookTranslations (bookID, translationID, name) VALUES
+    ('$book_id', (SELECT id FROM translations WHERE code = 'clementine'), '$book_name - Clementine')
+    ON CONFLICT (bookID, translationID) DO NOTHING;
     " >> $output_file
 
     # Récupérer la liste des chapitres pour chaque livre
@@ -72,13 +72,6 @@ echo "$books" | while IFS= read -r line; do
 
     # Extraire les chapitres
     chapters=$(echo "$chapters_response" | jq -r '.chapters[] | @base64')
-
-    # Insérer les traductions des livres
-    echo "
-    INSERT INTO bookTranslations (bookID, translationID, name) VALUES
-    ('$book_id', (SELECT id FROM translations WHERE code = 'clementine'), '$book_name - Clementine')
-    ON CONFLICT (bookID, translationID) DO NOTHING;
-    " >> $output_file
 
     echo "$chapters" | while IFS= read -r chapter_line; do
         chapter=$(echo "$chapter_line" | base64 --decode)
