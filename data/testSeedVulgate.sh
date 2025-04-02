@@ -56,9 +56,9 @@ echo "$books" | while IFS= read -r line; do
 
     # Insérer les livres dans la table "books"
     echo "
-    INSERT INTO books (testamentID) VALUES
-    (1) -- Vous devrez peut-être ajuster le testamentID en fonction de votre schéma
-    RETURNING id;
+    INSERT INTO books (id, testamentID) VALUES
+    ('$book_id', 1) -- Vous devrez peut-être ajuster le testamentID en fonction de votre schéma
+    ON CONFLICT (id) DO NOTHING;
     " >> $output_file
 
     # Récupérer la liste des chapitres pour chaque livre
@@ -76,7 +76,7 @@ echo "$books" | while IFS= read -r line; do
     # Insérer les traductions des livres
     echo "
     INSERT INTO bookTranslations (bookID, translationID, name) VALUES
-    ((SELECT id FROM books WHERE id = (SELECT currval(pg_get_serial_sequence('books','id')))), (SELECT id FROM translations WHERE code = 'clementine'), '$book_name - Clementine')
+    ('$book_id', (SELECT id FROM translations WHERE code = 'clementine'), '$book_name - Clementine')
     ON CONFLICT (bookID, translationID) DO NOTHING;
     " >> $output_file
 
@@ -121,7 +121,7 @@ echo "$books" | while IFS= read -r line; do
         # Insérer les chapitres dans la table "chapters"
         echo "
         INSERT INTO chapters (bookID, number) VALUES
-        ((SELECT id FROM books WHERE id = (SELECT currval(pg_get_serial_sequence('books','id')))), $chapter_number)
+        ('$book_id', $chapter_number)
         RETURNING id;
         " >> $output_file
 
