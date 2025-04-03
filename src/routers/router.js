@@ -1,9 +1,9 @@
 import { Router } from "express";
 
+import { translationRouter } from "./translationRouter";
+
 const router = Router();
 
-router.get("/", (req, res) => {
-	res.send("DEO GRATIAS");
-});
+router.use(translationRouter);
 
 export { router };
