@@ -9,9 +9,9 @@ verseRouter.get(
 	verseController.getVersesFromOneChapter,
 );
 
-// verseRouter.get(
-// 	"/verses/:translationCode/:chapterID/:verseID",
-// 	verseController.getSingleVerse,
-// );
+verseRouter.get(
+	"/:translationCode/:bookID/:chapterNumber/:verseNumber",
+	verseController.getSingleVerse,
+);
 
 export { verseRouter };

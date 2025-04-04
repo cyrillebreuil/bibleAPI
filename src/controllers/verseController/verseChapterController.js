@@ -3,6 +3,7 @@ import {
 	Chapter,
 	Book,
 	Translation,
+	BookTranslation,
 } from "../../models/Associations.js";
 
 const getVersesFromOneChapter = async (req, res) => {
@@ -37,6 +38,17 @@ const getVersesFromOneChapter = async (req, res) => {
 		});
 	}
 	const chapterID = chapterExists.id;
+	//Check if book exists in translation
+	const translationID = translationExists.id;
+	const bookInTranslation = await BookTranslation.findOne({
+		where: { bookID: bookID.toUpperCase(), translationID },
+	});
+	if (!bookInTranslation) {
+		return res.status(404).json({
+			success: false,
+			message: `Book with ID ${bookID} not found in translation ${translationCode}`,
+		});
+	}
 
 	const versesFromOneChapter = await Verse.findAll({
 		attributes: ["number", "text"],
