@@ -4,6 +4,7 @@ import {
 	Book,
 	Translation,
 	BookTranslation,
+	TestamentTranslation,
 	sequelize,
 } from "../../models/Associations.js";
 
@@ -25,7 +26,6 @@ const getRandomVerse = async (req, res) => {
 			{
 				model: Chapter,
 				as: "chapter",
-				attributes: ["number"],
 				include: [
 					{
 						model: Book,
@@ -52,6 +52,13 @@ const getRandomVerse = async (req, res) => {
 			.json({ message: "No verses found for this translation" });
 	}
 
+	//Récupération du testament traduit
+	const testamentTranslation = await TestamentTranslation.findOne({
+		where: {
+			isNewTestament: verse.chapter.book.isNewTestament,
+			translationID: translation.id,
+		},
+	});
 	// Créer une réponse plus riche pour l'API
 	const response = {
 		verse: {
@@ -59,20 +66,11 @@ const getRandomVerse = async (req, res) => {
 			number: verse.number,
 			text: verse.text,
 		},
-		chapter: {
-			id: verse.chapter.id,
-			number: verse.chapter.number,
-		},
-		book: {
-			id: verse.chapter.book.id,
-			isNewTestament: verse.chapter.book.isNewTestament,
-		},
-		reference: `${verse.chapter.book.id} ${verse.chapter.number}:${verse.number}`,
-		translation: {
-			code: translation.code,
-			name: translation.name,
-		},
+		chapter: verse.chapter.number,
 		bookTranslation: verse.chapter.book.translations[0].name || null,
+		reference: `${verse.chapter.book.id} ${verse.chapter.number}:${verse.number}`,
+		testamentTranslation: testamentTranslation.name,
+		translation: translation.name,
 	};
 
 	return res.status(200).json(response);
