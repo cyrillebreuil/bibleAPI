@@ -4,6 +4,14 @@ import { verseController } from "../controllers/verseController/verseController.
 
 const verseRouter = Router();
 
-verseRouter.get("/verses", verseController.getVersesFromOneChapter);
+verseRouter.get(
+	"/:translationCode/:bookID/:chapterNumber",
+	verseController.getVersesFromOneChapter,
+);
+
+// verseRouter.get(
+// 	"/verses/:translationCode/:chapterID/:verseID",
+// 	verseController.getSingleVerse,
+// );
 
 export { verseRouter };

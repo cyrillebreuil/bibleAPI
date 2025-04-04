@@ -1,4 +1,4 @@
-import { getVersesFromOneChapter } from "./verseControllerFromOneChapter.js";
+import { getVersesFromOneChapter } from "./verseChapterController.js";
 
 const verseController = {
 	getVersesFromOneChapter,
