@@ -1,9 +1,13 @@
 import { Router } from "express";
-import translationsController from "../controllers/translationsController";
+import { translationsController } from "../controllers/translationsController/translationsController.js";
 
 const translationRouter = Router();
 
-translationRouter.get("/translations", translationsController.getAll);
-translationRouter.get("/translations/:code", translationsController.getOne);
+translationRouter.get("/", (req, res) => {
+	res.send("Hello World!");
+});
+
+translationRouter.get("/translations", translationsController.index);
+//translationRouter.get("/translations/:code", translationsController.getOne);
 
 export { translationRouter };

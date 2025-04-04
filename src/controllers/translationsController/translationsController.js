@@ -1,4 +1,4 @@
-import { index } from "./translationsControllerIndex";
+import { index } from "./translationsControllerIndex.js";
 
 const translationsController = {
 	index,

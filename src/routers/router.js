@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { translationRouter } from "./translationRouter";
+import { translationRouter } from "./translationRouter.js";
 
 const router = Router();
 
