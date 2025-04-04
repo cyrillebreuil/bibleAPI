@@ -8,6 +8,10 @@ translationRouter.get("/", (req, res) => {
 });
 
 translationRouter.get("/translations", translationController.index);
-//translationRouter.get("/translations/:code", translationsController.getOne);
+translationRouter.get("/translations/:code", translationController.getOne);
+translationRouter.get(
+	"/translations/:code/info",
+	translationController.getOneInfo,
+);
 
 export { translationRouter };

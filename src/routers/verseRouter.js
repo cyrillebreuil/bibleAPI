@@ -13,5 +13,8 @@ verseRouter.get(
 	"/:translationCode/:bookID/:chapterNumber/:verseNumber",
 	verseController.getSingleVerse,
 );
-
+verseRouter.get(
+	"/:translationCode/randomverse",
+	verseController.getRandomVerse,
+);
 export { verseRouter };

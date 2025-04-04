@@ -107,9 +107,12 @@ echo "$books" | while IFS= read -r line; do
         fi
 
         # Utiliser jq pour extraire les versets et générer les instructions SQL
-        # Remplacer les retours à la ligne par des espaces dans le texte
+        # Avec nettoyage amélioré du texte:
+        # 1. Remplacer les retours à la ligne par des espaces
+        # 2. Remplacer les doubles espaces par des espaces simples (répété pour capturer les multiples occurrences)
+        # 3. Supprimer les espaces en début et fin de chaîne
         echo "$chapter_response" | jq -r --arg book_id "$book_id" --arg chapter_number "$chapter_number" --arg translation_code "kjv" '
-        .verses[] | "INSERT INTO \"verses\" (\"chapterID\", \"translationID\", \"number\", \"text\") VALUES ((SELECT \"id\" FROM \"chapters\" WHERE \"bookID\" = " + ("'\''" + $book_id + "'\''") + " AND \"number\" = " + $chapter_number + "), (SELECT \"id\" FROM \"translations\" WHERE \"code\" = " + ("'\''" + $translation_code + "'\''") + "), " + (.verse | tostring) + ", " + ((.text | gsub("\\n"; " ") | gsub("\\r"; "")) | @sh) + ") ON CONFLICT (\"chapterID\", \"translationID\", \"number\") DO NOTHING;"
+        .verses[] | "INSERT INTO \"verses\" (\"chapterID\", \"translationID\", \"number\", \"text\") VALUES ((SELECT \"id\" FROM \"chapters\" WHERE \"bookID\" = " + ("'\''" + $book_id + "'\''") + " AND \"number\" = " + $chapter_number + "), (SELECT \"id\" FROM \"translations\" WHERE \"code\" = " + ("'\''" + $translation_code + "'\''") + "), " + (.verse | tostring) + ", " + ((.text | gsub("\\n"; " ") | gsub("\\r"; "") | gsub("  +"; " ") | gsub("  +"; " ") | gsub("^ "; "") | gsub(" $"; "")) | @sh) + ") ON CONFLICT (\"chapterID\", \"translationID\", \"number\") DO NOTHING;"
         ' >> $output_file
     done
 done
