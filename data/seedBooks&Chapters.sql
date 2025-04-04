@@ -71,301 +71,6 @@ VALUES
 	('JUD', TRUE),
 	('REV', TRUE) ON CONFLICT (id) DO NOTHING;
 
--- Ajout des livres deutérocanoniques et orthodoxes
-INSERT INTO
-	"books" ("id", "isNewTestament")
-VALUES
-	('TOB', FALSE), -- Tobit
-	('JDT', FALSE), -- Judith
-	('WIS', FALSE), -- Sagesse
-	('SIR', FALSE), -- Siracide/Ecclésiastique
-	('BAR', FALSE), -- Baruch
-	('1MA', FALSE), -- 1 Maccabées
-	('2MA', FALSE), -- 2 Maccabées
-	('3MA', FALSE), -- 3 Maccabées (orthodoxe)
-	('4MA', FALSE), -- 4 Maccabées (orthodoxe)
-	('DAG', FALSE), -- Additions à Daniel
-	('ESG', FALSE), -- Additions à Esther
-	('MAN', FALSE), -- Prière de Manassé
-	('1ES', FALSE), -- 1 Esdras (3 Esdras)
-	('2ES', FALSE), -- 2 Esdras (4 Esdras)
-	('PS151', FALSE) -- Psaume 151
-	ON CONFLICT (id) DO NOTHING;
-
--- Livre de Tobit (TOB)
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('TOB', 1),
-	('TOB', 2),
-	('TOB', 3),
-	('TOB', 4),
-	('TOB', 5),
-	('TOB', 6),
-	('TOB', 7),
-	('TOB', 8),
-	('TOB', 9),
-	('TOB', 10),
-	('TOB', 11),
-	('TOB', 12),
-	('TOB', 13),
-	('TOB', 14) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de Judith (JDT)
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('JDT', 1),
-	('JDT', 2),
-	('JDT', 3),
-	('JDT', 4),
-	('JDT', 5),
-	('JDT', 6),
-	('JDT', 7),
-	('JDT', 8),
-	('JDT', 9),
-	('JDT', 10),
-	('JDT', 11),
-	('JDT', 12),
-	('JDT', 13),
-	('JDT', 14),
-	('JDT', 15),
-	('JDT', 16) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de la Sagesse (WIS)
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('WIS', 1),
-	('WIS', 2),
-	('WIS', 3),
-	('WIS', 4),
-	('WIS', 5),
-	('WIS', 6),
-	('WIS', 7),
-	('WIS', 8),
-	('WIS', 9),
-	('WIS', 10),
-	('WIS', 11),
-	('WIS', 12),
-	('WIS', 13),
-	('WIS', 14),
-	('WIS', 15),
-	('WIS', 16),
-	('WIS', 17),
-	('WIS', 18),
-	('WIS', 19) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre du Siracide (Ecclésiastique) (SIR)
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('SIR', 1),
-	('SIR', 2),
-	('SIR', 3),
-	('SIR', 4),
-	('SIR', 5),
-	('SIR', 6),
-	('SIR', 7),
-	('SIR', 8),
-	('SIR', 9),
-	('SIR', 10),
-	('SIR', 11),
-	('SIR', 12),
-	('SIR', 13),
-	('SIR', 14),
-	('SIR', 15),
-	('SIR', 16),
-	('SIR', 17),
-	('SIR', 18),
-	('SIR', 19),
-	('SIR', 20),
-	('SIR', 21),
-	('SIR', 22),
-	('SIR', 23),
-	('SIR', 24),
-	('SIR', 25),
-	('SIR', 26),
-	('SIR', 27),
-	('SIR', 28),
-	('SIR', 29),
-	('SIR', 30),
-	('SIR', 31),
-	('SIR', 32),
-	('SIR', 33),
-	('SIR', 34),
-	('SIR', 35),
-	('SIR', 36),
-	('SIR', 37),
-	('SIR', 38),
-	('SIR', 39),
-	('SIR', 40),
-	('SIR', 41),
-	('SIR', 42),
-	('SIR', 43),
-	('SIR', 44),
-	('SIR', 45),
-	('SIR', 46),
-	('SIR', 47),
-	('SIR', 48),
-	('SIR', 49),
-	('SIR', 50),
-	('SIR', 51) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de Baruch (BAR)
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('BAR', 1),
-	('BAR', 2),
-	('BAR', 3),
-	('BAR', 4),
-	('BAR', 5),
-	('BAR', 6) -- La lettre de Jérémie est parfois chapitre 6 de Baruch
-	ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de 1 Maccabées (1MA)
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('1MA', 1),
-	('1MA', 2),
-	('1MA', 3),
-	('1MA', 4),
-	('1MA', 5),
-	('1MA', 6),
-	('1MA', 7),
-	('1MA', 8),
-	('1MA', 9),
-	('1MA', 10),
-	('1MA', 11),
-	('1MA', 12),
-	('1MA', 13),
-	('1MA', 14),
-	('1MA', 15),
-	('1MA', 16) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de 2 Maccabées (2MA)
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('2MA', 1),
-	('2MA', 2),
-	('2MA', 3),
-	('2MA', 4),
-	('2MA', 5),
-	('2MA', 6),
-	('2MA', 7),
-	('2MA', 8),
-	('2MA', 9),
-	('2MA', 10),
-	('2MA', 11),
-	('2MA', 12),
-	('2MA', 13),
-	('2MA', 14),
-	('2MA', 15) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de 3 Maccabées (3MA) - Tradition orthodoxe
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('3MA', 1),
-	('3MA', 2),
-	('3MA', 3),
-	('3MA', 4),
-	('3MA', 5),
-	('3MA', 6),
-	('3MA', 7) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de 4 Maccabées (4MA) - Tradition orthodoxe
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('4MA', 1),
-	('4MA', 2),
-	('4MA', 3),
-	('4MA', 4),
-	('4MA', 5),
-	('4MA', 6),
-	('4MA', 7),
-	('4MA', 8),
-	('4MA', 9),
-	('4MA', 10),
-	('4MA', 11),
-	('4MA', 12),
-	('4MA', 13),
-	('4MA', 14),
-	('4MA', 15),
-	('4MA', 16),
-	('4MA', 17),
-	('4MA', 18) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Additions à Daniel (DAG) - Version grecque
--- Ces chapitres sont parfois numérotés différemment selon les traductions
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('DAG', 1), -- Prière d'Azarias et cantique des trois enfants
-	('DAG', 2), -- Histoire de Suzanne
-	('DAG', 3) -- Bel et le dragon
-	ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Additions à Esther (ESG) - Version grecque
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('ESG', 1) -- Les additions sont généralement regroupées
-	ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de la Prière de Manassé (MAN) - Dans certaines traditions orthodoxes
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('MAN', 1) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de 1 Esdras (1ES) - Dans certaines traditions orthodoxes
--- Aussi connu sous le nom de 3 Esdras dans la Vulgate
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('1ES', 1),
-	('1ES', 2),
-	('1ES', 3),
-	('1ES', 4),
-	('1ES', 5),
-	('1ES', 6),
-	('1ES', 7),
-	('1ES', 8),
-	('1ES', 9) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Livre de 2 Esdras (2ES) - Dans certaines traditions orthodoxes
--- Aussi connu sous le nom de 4 Esdras ou Apocalypse d'Esdras
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('2ES', 1),
-	('2ES', 2),
-	('2ES', 3),
-	('2ES', 4),
-	('2ES', 5),
-	('2ES', 6),
-	('2ES', 7),
-	('2ES', 8),
-	('2ES', 9),
-	('2ES', 10),
-	('2ES', 11),
-	('2ES', 12),
-	('2ES', 13),
-	('2ES', 14),
-	('2ES', 15),
-	('2ES', 16) ON CONFLICT ("bookID", "number") DO NOTHING;
-
--- Psaume 151 (PS151) - Présent dans la Bible orthodoxe
-INSERT INTO
-	"chapters" ("bookID", "number")
-VALUES
-	('PS151', 1) ON CONFLICT ("bookID", "number") DO NOTHING;
-
 -- Insérer les chapitres pour chaque livre
 -- Livre de la Genèse (GEN)
 INSERT INTO
@@ -1885,5 +1590,300 @@ VALUES
 	('REV', 20),
 	('REV', 21),
 	('REV', 22) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Ajout des livres deutérocanoniques et orthodoxes
+INSERT INTO
+	"books" ("id", "isNewTestament")
+VALUES
+	('TOB', FALSE), -- Tobit
+	('JDT', FALSE), -- Judith
+	('WIS', FALSE), -- Sagesse
+	('SIR', FALSE), -- Siracide/Ecclésiastique
+	('BAR', FALSE), -- Baruch
+	('1MA', FALSE), -- 1 Maccabées
+	('2MA', FALSE), -- 2 Maccabées
+	('3MA', FALSE), -- 3 Maccabées (orthodoxe)
+	('4MA', FALSE), -- 4 Maccabées (orthodoxe)
+	('DAG', FALSE), -- Additions à Daniel
+	('ESG', FALSE), -- Additions à Esther
+	('MAN', FALSE), -- Prière de Manassé
+	('1ES', FALSE), -- 1 Esdras (3 Esdras)
+	('2ES', FALSE), -- 2 Esdras (4 Esdras)
+	('PS151', FALSE) -- Psaume 151
+	ON CONFLICT (id) DO NOTHING;
+
+-- Livre de Tobit (TOB)
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('TOB', 1),
+	('TOB', 2),
+	('TOB', 3),
+	('TOB', 4),
+	('TOB', 5),
+	('TOB', 6),
+	('TOB', 7),
+	('TOB', 8),
+	('TOB', 9),
+	('TOB', 10),
+	('TOB', 11),
+	('TOB', 12),
+	('TOB', 13),
+	('TOB', 14) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de Judith (JDT)
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('JDT', 1),
+	('JDT', 2),
+	('JDT', 3),
+	('JDT', 4),
+	('JDT', 5),
+	('JDT', 6),
+	('JDT', 7),
+	('JDT', 8),
+	('JDT', 9),
+	('JDT', 10),
+	('JDT', 11),
+	('JDT', 12),
+	('JDT', 13),
+	('JDT', 14),
+	('JDT', 15),
+	('JDT', 16) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de la Sagesse (WIS)
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('WIS', 1),
+	('WIS', 2),
+	('WIS', 3),
+	('WIS', 4),
+	('WIS', 5),
+	('WIS', 6),
+	('WIS', 7),
+	('WIS', 8),
+	('WIS', 9),
+	('WIS', 10),
+	('WIS', 11),
+	('WIS', 12),
+	('WIS', 13),
+	('WIS', 14),
+	('WIS', 15),
+	('WIS', 16),
+	('WIS', 17),
+	('WIS', 18),
+	('WIS', 19) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre du Siracide (Ecclésiastique) (SIR)
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('SIR', 1),
+	('SIR', 2),
+	('SIR', 3),
+	('SIR', 4),
+	('SIR', 5),
+	('SIR', 6),
+	('SIR', 7),
+	('SIR', 8),
+	('SIR', 9),
+	('SIR', 10),
+	('SIR', 11),
+	('SIR', 12),
+	('SIR', 13),
+	('SIR', 14),
+	('SIR', 15),
+	('SIR', 16),
+	('SIR', 17),
+	('SIR', 18),
+	('SIR', 19),
+	('SIR', 20),
+	('SIR', 21),
+	('SIR', 22),
+	('SIR', 23),
+	('SIR', 24),
+	('SIR', 25),
+	('SIR', 26),
+	('SIR', 27),
+	('SIR', 28),
+	('SIR', 29),
+	('SIR', 30),
+	('SIR', 31),
+	('SIR', 32),
+	('SIR', 33),
+	('SIR', 34),
+	('SIR', 35),
+	('SIR', 36),
+	('SIR', 37),
+	('SIR', 38),
+	('SIR', 39),
+	('SIR', 40),
+	('SIR', 41),
+	('SIR', 42),
+	('SIR', 43),
+	('SIR', 44),
+	('SIR', 45),
+	('SIR', 46),
+	('SIR', 47),
+	('SIR', 48),
+	('SIR', 49),
+	('SIR', 50),
+	('SIR', 51) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de Baruch (BAR)
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('BAR', 1),
+	('BAR', 2),
+	('BAR', 3),
+	('BAR', 4),
+	('BAR', 5),
+	('BAR', 6) -- La lettre de Jérémie est parfois chapitre 6 de Baruch
+	ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de 1 Maccabées (1MA)
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('1MA', 1),
+	('1MA', 2),
+	('1MA', 3),
+	('1MA', 4),
+	('1MA', 5),
+	('1MA', 6),
+	('1MA', 7),
+	('1MA', 8),
+	('1MA', 9),
+	('1MA', 10),
+	('1MA', 11),
+	('1MA', 12),
+	('1MA', 13),
+	('1MA', 14),
+	('1MA', 15),
+	('1MA', 16) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de 2 Maccabées (2MA)
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('2MA', 1),
+	('2MA', 2),
+	('2MA', 3),
+	('2MA', 4),
+	('2MA', 5),
+	('2MA', 6),
+	('2MA', 7),
+	('2MA', 8),
+	('2MA', 9),
+	('2MA', 10),
+	('2MA', 11),
+	('2MA', 12),
+	('2MA', 13),
+	('2MA', 14),
+	('2MA', 15) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de 3 Maccabées (3MA) - Tradition orthodoxe
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('3MA', 1),
+	('3MA', 2),
+	('3MA', 3),
+	('3MA', 4),
+	('3MA', 5),
+	('3MA', 6),
+	('3MA', 7) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de 4 Maccabées (4MA) - Tradition orthodoxe
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('4MA', 1),
+	('4MA', 2),
+	('4MA', 3),
+	('4MA', 4),
+	('4MA', 5),
+	('4MA', 6),
+	('4MA', 7),
+	('4MA', 8),
+	('4MA', 9),
+	('4MA', 10),
+	('4MA', 11),
+	('4MA', 12),
+	('4MA', 13),
+	('4MA', 14),
+	('4MA', 15),
+	('4MA', 16),
+	('4MA', 17),
+	('4MA', 18) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Additions à Daniel (DAG) - Version grecque
+-- Ces chapitres sont parfois numérotés différemment selon les traductions
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('DAG', 1), -- Prière d'Azarias et cantique des trois enfants
+	('DAG', 2), -- Histoire de Suzanne
+	('DAG', 3) -- Bel et le dragon
+	ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Additions à Esther (ESG) - Version grecque
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('ESG', 1) -- Les additions sont généralement regroupées
+	ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de la Prière de Manassé (MAN) - Dans certaines traditions orthodoxes
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('MAN', 1) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de 1 Esdras (1ES) - Dans certaines traditions orthodoxes
+-- Aussi connu sous le nom de 3 Esdras dans la Vulgate
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('1ES', 1),
+	('1ES', 2),
+	('1ES', 3),
+	('1ES', 4),
+	('1ES', 5),
+	('1ES', 6),
+	('1ES', 7),
+	('1ES', 8),
+	('1ES', 9) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Livre de 2 Esdras (2ES) - Dans certaines traditions orthodoxes
+-- Aussi connu sous le nom de 4 Esdras ou Apocalypse d'Esdras
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('2ES', 1),
+	('2ES', 2),
+	('2ES', 3),
+	('2ES', 4),
+	('2ES', 5),
+	('2ES', 6),
+	('2ES', 7),
+	('2ES', 8),
+	('2ES', 9),
+	('2ES', 10),
+	('2ES', 11),
+	('2ES', 12),
+	('2ES', 13),
+	('2ES', 14),
+	('2ES', 15),
+	('2ES', 16) ON CONFLICT ("bookID", "number") DO NOTHING;
+
+-- Psaume 151 (PS151) - Présent dans la Bible orthodoxe
+INSERT INTO
+	"chapters" ("bookID", "number")
+VALUES
+	('PS151', 1) ON CONFLICT ("bookID", "number") DO NOTHING;
 
 COMMIT;
