@@ -20,5 +20,4 @@ verseRouter.get(
 	"/:translationCode/:bookID/:chapterNumber/:verseNumber",
 	verseController.getSingleVerse,
 );
-verseRouter.get("/:translationCode/:bookID", verseController.getVersesFromBook);
 export { verseRouter };

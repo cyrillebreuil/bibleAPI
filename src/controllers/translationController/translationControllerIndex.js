@@ -3,9 +3,7 @@ import {
 	Verse,
 	Book,
 	BookTranslation,
-	Chapter,
 } from "../../models/Associations.js";
-import { Sequelize } from "sequelize";
 
 const index = async (req, res) => {
 	const translations = await Translation.findAll({
