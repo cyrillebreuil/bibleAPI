@@ -51,6 +51,9 @@ const getVersesFromOneChapter = async (req, res) => {
 	}
 
 	const versesFromOneChapter = await Verse.findAll({
+		where: {
+			translationID,
+		},
 		attributes: ["number", "text"],
 		include: [
 			{
