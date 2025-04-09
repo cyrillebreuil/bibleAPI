@@ -36,6 +36,7 @@ const getAllBooksFromOneTranslation = async (req, res) => {
 	});
 	const responseObject = {
 		translation: enhancedTranslation,
+		// testament:,
 		books,
 	};
 	res.json(responseObject);
