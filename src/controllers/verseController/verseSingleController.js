@@ -5,41 +5,46 @@ import {
 	Translation,
 	BookTranslation,
 } from "../../models/Associations.js";
+import { Sequelize } from "sequelize";
 
 const getSingleVerse = async (req, res) => {
 	const { translationCode, bookID, chapterNumber, verseNumber } = req.params;
-	//Checks
-	const translationExists = await Translation.findOne({
+	const upperBookID = bookID.toUpperCase();
+
+	// Récupérer d'abord la traduction
+	const translation = await Translation.findOne({
 		where: { code: translationCode },
 	});
-	if (!translationExists) {
+
+	if (!translation) {
 		return res.status(404).json({ message: "Translation not found" });
 	}
-	const chapterExists = await Chapter.findOne({
-		where: { number: chapterNumber, bookID: bookID.toUpperCase() },
-	});
-	if (!chapterExists) {
+
+	// Ensuite, récupérer les autres données en parallèle
+	const [chapter, book, bookTranslation] = await Promise.all([
+		Chapter.findOne({
+			where: { number: chapterNumber, bookID: upperBookID },
+		}),
+		Book.findOne({
+			where: { id: upperBookID },
+		}),
+		BookTranslation.findOne({
+			where: {
+				bookID: upperBookID,
+				translationID: translation.id, // Utiliser l'ID de traduction obtenu
+			},
+		}),
+	]);
+
+	if (!chapter) {
 		return res.status(404).json({ message: "Chapter not found" });
 	}
-	const verseExists = await Verse.findOne({
-		where: { number: verseNumber, chapterID: chapterExists.id },
-	});
-	if (!verseExists) {
-		return res.status(404).json({ message: "Verse not found" });
-	}
-	const bookExists = await Book.findOne({
-		where: { id: bookID.toUpperCase() },
-	});
-	if (!bookExists) {
+
+	if (!book) {
 		return res.status(404).json({ message: "Book not found" });
 	}
-	const bookTranslationExists = await BookTranslation.findOne({
-		where: {
-			bookID: bookExists.id.toUpperCase(),
-			translationID: translationExists.id,
-		},
-	});
-	if (!bookTranslationExists) {
+
+	if (!bookTranslation) {
 		return res.status(404).json({ message: "Book translation not found" });
 	}
 
@@ -47,8 +52,8 @@ const getSingleVerse = async (req, res) => {
 		attributes: ["text"],
 		where: {
 			number: verseNumber,
-			chapterID: chapterExists.id,
-			translationID: translationExists.id,
+			chapterID: chapter.id,
+			translationID: translation.id,
 		},
 	});
 

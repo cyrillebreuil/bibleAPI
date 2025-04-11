@@ -17,12 +17,14 @@ const getAllBooksFromOneTranslation = async (req, res) => {
 			requestedCode: translationCode,
 		});
 	}
-	const verseCount = await Verse.count({
-		where: { translationID: translation.id },
-	});
-	const bookCount = await BookTranslation.count({
-		where: { translationID: translation.id },
-	});
+	const [verseCount, bookCount, books] = await Promise.all([
+		Verse.count({ where: { translationID: translation.id } }),
+		BookTranslation.count({ where: { translationID: translation.id } }),
+		BookTranslation.findAll({
+			where: { translationID: translation.id },
+			attributes: ["bookID", "name"],
+		}),
+	]);
 	const enhancedTranslation = {
 		...translation.toJSON(),
 		stats: {
@@ -30,10 +32,6 @@ const getAllBooksFromOneTranslation = async (req, res) => {
 			verseCount,
 		},
 	};
-	const books = await BookTranslation.findAll({
-		where: { translationID: translation.id },
-		attributes: ["bookID", "name"],
-	});
 	const responseObject = {
 		translation: enhancedTranslation,
 		// testament:,

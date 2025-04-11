@@ -17,6 +17,7 @@ const getRandomVerse = async (req, res) => {
 	if (!translation) {
 		return res.status(404).json({ error: "Translation not found" });
 	}
+	// Optimiser en utilisant des jointures SQL
 	const verse = await Verse.findOne({
 		where: {
 			translationID: translation.id,
@@ -26,18 +27,19 @@ const getRandomVerse = async (req, res) => {
 			{
 				model: Chapter,
 				as: "chapter",
+				attributes: ["number"],
 				include: [
 					{
 						model: Book,
 						as: "book",
+						attributes: ["id", "isNewTestament"],
 						include: [
 							{
 								model: BookTranslation,
 								as: "translations",
-								where: {
-									translationID: translation.id,
-								},
-								required: false, // Utiliser un left join au cas où il n'y a pas de traduction
+								where: { translationID: translation.id },
+								required: false,
+								attributes: ["name"],
 							},
 						],
 					},
