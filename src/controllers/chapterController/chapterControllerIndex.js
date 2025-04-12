@@ -3,6 +3,7 @@ import {
 	Translation,
 	BookTranslation,
 	Book,
+	TestamentTranslation,
 } from "../../models/Associations.js";
 
 const getAllChaptersFromBook = async (req, res) => {
@@ -15,30 +16,47 @@ const getAllChaptersFromBook = async (req, res) => {
 	if (!translation) {
 		return res.status(404).json({ error: "Translation not found" });
 	}
+	//Find Book first
+	const book = await Book.findOne({
+		where: {
+			id: bookID.toUpperCase(),
+		},
+	});
+	if (!book) {
+		return res.status(404).json({ error: "Book not found" });
+	}
 	// Exécuter les requêtes en parallèle
-	const [chapters, chapterCount, bookTranslation] = await Promise.all([
-		Chapter.findAll({
-			where: { bookID: bookID.toUpperCase() },
-			attributes: ["number", "bookID"],
-			order: [["number", "ASC"]],
-		}),
-		Chapter.count({ where: { bookID: bookID.toUpperCase() } }),
-		BookTranslation.findOne({
-			where: {
-				bookID: bookID.toUpperCase(),
-				translationID: translation.id,
-			},
-			attributes: ["bookID", "name"],
-		}),
-	]);
+	const [chapters, chapterCount, bookTranslation, testamentTranslation] =
+		await Promise.all([
+			Chapter.findAll({
+				where: { bookID: bookID.toUpperCase() },
+				attributes: ["number", "bookID"],
+				order: [["number", "ASC"]],
+			}),
+			Chapter.count({ where: { bookID: bookID.toUpperCase() } }),
+			BookTranslation.findOne({
+				where: {
+					bookID: bookID.toUpperCase(),
+					translationID: translation.id,
+				},
+				attributes: ["bookID", "name"],
+			}),
+			TestamentTranslation.findOne({
+				where: {
+					isNewTestament: book.isNewTestament,
+					translationID: translation.id,
+				},
+				attributes: ["name"],
+			}),
+		]);
 	if (!chapters || chapters.length === 0) {
 		return res.status(404).json({ error: "Chapters not found" });
 	}
 	const responseObject = {
 		book: {
-			translation: translation.name,
 			id: bookTranslation.bookID,
 			name: bookTranslation.name,
+			testament: testamentTranslation.name,
 			"Total Number Of Chapters": chapterCount,
 		},
 		chapters,
