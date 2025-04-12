@@ -9,10 +9,6 @@ verseRouter.get(
 	verseController.getRandomVerse,
 );
 verseRouter.get(
-	"/:translationCode/:bookID/randomverse",
-	verseController.getRandomVerseFromBook,
-);
-verseRouter.get(
 	"/:translationCode/:bookID/:chapterNumber",
 	verseController.getVersesFromOneChapter,
 );
