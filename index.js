@@ -5,10 +5,14 @@ const __dirname = import.meta.dirname;
 const port = process.env.PORT || 3000;
 const url = process.env.URL || "http://127.0.0.1";
 
+import { globalLimiter } from "./src/middlewares/rateLimiter.js";
 import { router } from "./src/routers/router.js";
 import { notFound, errorHandler } from "./src/middlewares/errorHandlers.js";
 
 const app = express();
+
+app.use(globalLimiter);
+
 app.use(router);
 
 app.use(notFound);
