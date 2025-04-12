@@ -14,28 +14,29 @@ const getVersesFromOneChapter = async (req, res) => {
 		where: { number: chapterNumber, bookID: bookID.toUpperCase() },
 	});
 	if (!chapterExists) {
-		return res.status(404).json({
-			success: false,
-			message: `Chapter number ${chapterNumber} from book ${bookID} not found`,
-		});
+		const error = new Error(
+			`Chapter number ${chapterNumber} from book ${bookID} not found`,
+		);
+		error.status = 404;
+		throw error;
 	}
 	const bookExists = await Book.findOne({
 		where: { id: bookID.toUpperCase() },
 	});
 	if (!bookExists) {
-		return res.status(404).json({
-			success: false,
-			message: `Book with ID ${bookID} not found`,
-		});
+		const error = new Error(`Book with ID ${bookID} not found`);
+		error.status = 404;
+		throw error;
 	}
 	const translationExists = await Translation.findOne({
 		where: { code: translationCode },
 	});
 	if (!translationExists) {
-		return res.status(404).json({
-			success: false,
-			message: `Translation with code ${translationCode} not found`,
-		});
+		const error = new Error(
+			`Translation with code ${translationCode} not found`,
+		);
+		error.status = 404;
+		throw error;
 	}
 	const chapterID = chapterExists.id;
 	//Check if book exists in translation
@@ -44,10 +45,11 @@ const getVersesFromOneChapter = async (req, res) => {
 		where: { bookID: bookID.toUpperCase(), translationID },
 	});
 	if (!bookInTranslation) {
-		return res.status(404).json({
-			success: false,
-			message: `Book with ID ${bookID} not found in translation ${translationCode}`,
-		});
+		const error = new Error(
+			`Book with ID ${bookID} not found in translation ${translationCode}`,
+		);
+		error.status = 404;
+		throw error;
 	}
 
 	const versesFromOneChapter = await Verse.findAll({

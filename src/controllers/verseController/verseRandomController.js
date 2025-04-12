@@ -20,7 +20,11 @@ const getRandomVerse = async (req, res) => {
 	});
 
 	if (!translation) {
-		return res.status(404).json({ error: "Translation not found" });
+		const error = new Error(
+			`Translation with code ${translationCode} not found`,
+		);
+		error.status = 404;
+		throw error;
 	}
 
 	// Créer un tableau pour stocker toutes les conditions de jointure
@@ -95,15 +99,18 @@ const getRandomVerse = async (req, res) => {
 	});
 
 	if (!verse) {
-		return res.status(404).json({
-			message:
-				"No verses found for this translation with the specified filters",
+		const error = new Error(
+			"No verses found for this translation with the specified filters",
+		);
+		error.status = 404;
+		error.details = {
 			filters: {
 				translation: translationCode,
 				testament: testament || "any",
 				bookId: bookID || "any",
 			},
-		});
+		};
+		throw error;
 	}
 
 	// Récupération du testament traduit

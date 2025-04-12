@@ -6,9 +6,13 @@ const port = process.env.PORT || 3000;
 const url = process.env.URL || "http://127.0.0.1";
 
 import { router } from "./src/routers/router.js";
+import { notFound, errorHandler } from "./src/middlewares/errorHandlers.js";
 
 const app = express();
 app.use(router);
+
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
 	console.log(`Bible Server is running on :${url}:${port}`);

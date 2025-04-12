@@ -19,11 +19,10 @@ const searchVerses = async (req, res) => {
 
 	// Valider les paramètres
 	if (!q || q.trim() === "") {
-		return res.status(400).json({
-			error: "Un terme de recherche est requis",
-			message:
-				"Veuillez fournir un terme de recherche via le paramètre 'q'",
-		});
+		const error = new Error("A search term is required");
+		error.status = 400;
+		error.details = "Please provide a search term via the 'q' parameter";
+		throw error;
 	}
 
 	// Convertir les options de chaîne à booléen
@@ -68,10 +67,12 @@ const searchVerses = async (req, res) => {
 		});
 
 		if (!translationRecord) {
-			return res.status(404).json({
-				error: `Traduction avec le code "${translation}" non trouvée`,
-				requestedCode: translation,
-			});
+			const error = new Error(
+				`Translation with code "${translation}" not found`,
+			);
+			error.status = 404;
+			error.details = `Please provide a valid translation code via the 'translation' parameter`;
+			throw error;
 		}
 
 		translationId = translationRecord.id;
@@ -125,15 +126,18 @@ const searchVerses = async (req, res) => {
 	});
 
 	if (verses.length === 0) {
-		return res.status(404).json({
-			message: `Aucun verset trouvé pour la recherche "${q}"`,
-			searchTerms,
+		const error = new Error(`No verses found for search "${q}"`);
+		error.status = 404;
+		error.details = {
+			info: `Please provide a valid search query via the 'q' parameter`,
+			searchTerms: searchTerms,
 			options: {
 				exact: isExactMatch,
 				operator: useAndOperator ? "AND" : "OR",
 				translation: translation || "all",
 			},
-		});
+		};
+		throw error;
 	}
 
 	// Formater les résultats pour une réponse plus propre

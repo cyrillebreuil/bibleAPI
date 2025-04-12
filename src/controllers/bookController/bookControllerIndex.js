@@ -14,10 +14,10 @@ const getAllBooksFromOneTranslation = async (req, res) => {
 		},
 	});
 	if (!translation) {
-		return res.status(404).json({
-			error: `Traduction avec le code "${translationCode}" non trouvée`,
-			requestedCode: translationCode,
-		});
+		const error = new Error("Translation not found");
+		error.status = 404;
+		error.details = { requestedCode: translationCode };
+		throw error;
 	}
 	const [
 		verseCount,

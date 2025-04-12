@@ -17,7 +17,12 @@ const getSingleVerse = async (req, res) => {
 	});
 
 	if (!translation) {
-		return res.status(404).json({ message: "Translation not found" });
+		const error = new Error("Translation not found");
+		error.status = 404;
+		error.details = `
+			Translation not found for code ${translationCode}.
+		`;
+		throw error;
 	}
 
 	// Ensuite, récupérer les autres données en parallèle
@@ -37,15 +42,30 @@ const getSingleVerse = async (req, res) => {
 	]);
 
 	if (!chapter) {
-		return res.status(404).json({ message: "Chapter not found" });
+		const error = new Error("Chapter not found");
+		error.status = 404;
+		error.details = `
+			Chapter not found for book ${book.name} and chapter ${chapterNumber} in translation : ${translation.name}.
+		`;
+		throw error;
 	}
 
 	if (!book) {
-		return res.status(404).json({ message: "Book not found" });
+		const error = new Error("Book not found");
+		error.status = 404;
+		error.details = `
+			Book not found for ID ${upperBookID} in translation : ${translation.name}.
+		`;
+		throw error;
 	}
 
 	if (!bookTranslation) {
-		return res.status(404).json({ message: "Book translation not found" });
+		const error = new Error("Book translation not found");
+		error.status = 404;
+		error.details = `
+			Book translation not found for book ${book.name} in translation : ${translation.name}.
+		`;
+		throw error;
 	}
 
 	const verse = await Verse.findOne({
@@ -58,7 +78,12 @@ const getSingleVerse = async (req, res) => {
 	});
 
 	if (!verse) {
-		return res.status(404).json({ message: "Verse not found" });
+		const error = new Error("Verse not found");
+		error.status = 404;
+		error.details = `
+			Verse not found for book ${book.name}, chapter ${chapterNumber}, verse ${verseNumber} in translation : ${translation.name}.
+		`;
+		throw error;
 	}
 
 	res.json(verse);

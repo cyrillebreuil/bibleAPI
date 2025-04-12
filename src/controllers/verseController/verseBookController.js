@@ -11,7 +11,10 @@ const getVersesFromBook = async (req, res) => {
 	// Vérifier si le livre existe
 	const book = await Book.findByPk(bookID.toUpperCase());
 	if (!book) {
-		return res.status(404).json({ error: "Book not found" });
+		const error = new Error("Book not found");
+		error.status = 404;
+		error.details = `The book with ID '${bookID}' does not exist`;
+		throw error;
 	}
 
 	// Vérifier si la traduction existe
@@ -19,7 +22,10 @@ const getVersesFromBook = async (req, res) => {
 		where: { code: translationCode },
 	});
 	if (!translation) {
-		return res.status(404).json({ error: "Translation not found" });
+		const error = new Error("Translation not found");
+		error.status = 404;
+		error.details = `The translation with code '${translationCode}' does not exist`;
+		throw error;
 	}
 
 	// Trouver tous les chapitres du livre
@@ -29,9 +35,10 @@ const getVersesFromBook = async (req, res) => {
 	});
 
 	if (!chapters || chapters.length === 0) {
-		return res
-			.status(404)
-			.json({ error: "No chapters found for this book" });
+		const error = new Error("No chapters found for this book");
+		error.status = 404;
+		error.details = `No chapters found for the book with ID '${bookID}'`;
+		throw error;
 	}
 
 	// Extraire les IDs des chapitres
@@ -64,9 +71,12 @@ const getVersesFromBook = async (req, res) => {
 	});
 
 	if (!verses || verses.length === 0) {
-		return res.status(404).json({
-			error: "No verses found for this book in the specified translation",
-		});
+		const error = new Error(
+			"No verses found for this book in the specified translation",
+		);
+		error.status = 404;
+		error.details = `No verses found for the book with ID '${bookID}' in the translation with code '${translationCode}'`;
+		throw error;
 	}
 
 	return res.status(200).json(verses);
