@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { catchErrors } from "../middlewares/catchErrors.js";
 
 import { verseController } from "../controllers/verseController/verseController.js";
 
@@ -6,14 +7,14 @@ const verseRouter = Router();
 
 verseRouter.get(
 	"/:translationCode/randomverse",
-	verseController.getRandomVerse,
+	catchErrors(verseController.getRandomVerse),
 );
 verseRouter.get(
 	"/:translationCode/:bookID/:chapterNumber",
-	verseController.getVersesFromOneChapter,
+	catchErrors(verseController.getVersesFromOneChapter),
 );
 verseRouter.get(
 	"/:translationCode/:bookID/:chapterNumber/:verseNumber",
-	verseController.getSingleVerse,
+	catchErrors(verseController.getSingleVerse),
 );
 export { verseRouter };
