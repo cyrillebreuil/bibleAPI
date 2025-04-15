@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { catchErrors } from "../middlewares/catchErrors.js";
+import { catchErrors } from "../middlewares/errorHandlers.js";
 
 import { translationController } from "../controllers/translationController/translationController.js";
 
