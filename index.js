@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 
 // Configuration de base
+import { ANSIIColors } from "./src/utils/colors.js";
 const __dirname = import.meta.dirname;
 const port = process.env.PORT || 3000;
 const url = process.env.URL || "http://127.0.0.1";
@@ -24,18 +25,9 @@ app.use(router);
 app.use(notFound);
 app.use(errorHandler);
 
-// Codes couleurs ANSI
-const colors = {
-	green: "\x1b[32m",
-	blue: "\x1b[34m",
-	yellow: "\x1b[33m",
-	purple: "\x1b[35m",
-	reset: "\x1b[0m",
-};
-
 // Démarrage du serveur
 app.listen(process.env.PORT, () => {
 	console.log(
-		`📖${colors.blue} Bible API server running at ${colors.purple}${url}:${port}${colors.reset}`,
+		`📖${ANSIIColors.blue} Bible API server running at ${ANSIIColors.magenta}${url}:${port}${ANSIIColors.reset}`,
 	);
 });
