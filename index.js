@@ -6,6 +6,8 @@ import { ANSIIColors } from "./src/utils/colors.js";
 const __dirname = import.meta.dirname;
 const port = process.env.PORT || 3000;
 const url = process.env.URL || "http://127.0.0.1";
+import cors from "cors";
+import { corsOptions } from "./src/utils/cors.js";
 
 // Middlewares
 import { globalLimiter } from "./src/middlewares/rateLimiter.js";
@@ -17,6 +19,9 @@ const app = express();
 
 // Middleware de limitation des requêtes
 app.use(globalLimiter);
+
+// Middleware CORS
+app.use(cors(corsOptions));
 
 // Routes de l'API
 app.use(router);
