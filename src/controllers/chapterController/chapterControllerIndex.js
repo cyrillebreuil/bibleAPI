@@ -55,6 +55,12 @@ const getAllChaptersFromBook = async (req, res) => {
 				attributes: ["name"],
 			}),
 		]);
+	if (!bookTranslation) {
+		const error = new Error("Book Translation not found");
+		error.status = 404;
+		error.details = `The book with ID ${bookID} was not found in the translation ${translation.name}.`;
+		throw error;
+	}
 	if (!chapters || chapters.length === 0) {
 		const error = new Error("Chapters not found");
 		error.status = 404;

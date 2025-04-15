@@ -16,7 +16,7 @@ const getAllBooksFromOneTranslation = async (req, res) => {
 	if (!translation) {
 		const error = new Error("Translation not found");
 		error.status = 404;
-		error.details = { requestedCode: translationCode };
+		error.details = `The translation with code ${translationCode} was not found.`;
 		throw error;
 	}
 	const [
