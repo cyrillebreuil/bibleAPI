@@ -591,7 +591,14 @@ VALUES
 	('EST', 7),
 	('EST', 8),
 	('EST', 9),
-	('EST', 10) ON CONFLICT ("bookID", "number") DO NOTHING;
+	('EST', 10),
+	('EST', 11), -- Chapitres supplémentaires pour la Vulgate Clémentine
+	('EST', 12), -- Chapitres supplémentaires pour la Vulgate Clémentine
+	('EST', 13), -- Chapitres supplémentaires pour la Vulgate Clémentine
+	('EST', 14), -- Chapitres supplémentaires pour la Vulgate Clémentine
+	('EST', 15), -- Chapitres supplémentaires pour la Vulgate Clémentine
+	('EST', 16) -- Chapitres supplémentaires pour la Vulgate Clémentine
+	ON CONFLICT ("bookID", "number") DO NOTHING;
 
 -- Livre de Job (JOB)
 INSERT INTO
@@ -1605,7 +1612,7 @@ VALUES
 	('3MA', FALSE), -- 3 Maccabées (orthodoxe)
 	('4MA', FALSE), -- 4 Maccabées (orthodoxe)
 	('DAG', FALSE), -- Additions à Daniel
-	('ESG', FALSE), -- Additions à Esther
+	('ESG', FALSE), -- Additions à Esther (intégré directement dans EST mais je laisse au cas ou)
 	('MAN', FALSE), -- Prière de Manassé
 	('1ES', FALSE), -- 1 Esdras (3 Esdras)
 	('2ES', FALSE), -- 2 Esdras (4 Esdras)

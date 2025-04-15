@@ -51,6 +51,28 @@ CREATE TABLE "verses" (
 	UNIQUE ("chapterID", "translationID", "number")
 );
 
+-- Réinitialisation explicite des séquences d'identité
+ALTER TABLE "chapters"
+ALTER COLUMN "id"
+RESTART WITH 1;
+
+ALTER TABLE "translations"
+ALTER COLUMN "id"
+RESTART WITH 1;
+
+ALTER TABLE "testamentTranslations"
+ALTER COLUMN "id"
+RESTART WITH 1;
+
+ALTER TABLE "bookTranslations"
+ALTER COLUMN "id"
+RESTART WITH 1;
+
+ALTER TABLE "verses"
+ALTER COLUMN "id"
+RESTART WITH 1;
+
+-- Foreign Keys
 ALTER TABLE "chapters" ADD FOREIGN KEY ("bookID") REFERENCES "books" ("id");
 
 ALTER TABLE "testamentTranslations" ADD FOREIGN KEY ("translationID") REFERENCES "translations" ("id");

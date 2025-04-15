@@ -52,6 +52,13 @@ const index = async (req, res) => {
 		enhancedTranslationsPromises,
 	);
 
+	if (!enhancedTranslations) {
+		const error = new Error("Enhanced translations not found");
+		error.status = 404;
+		error.details = `Enhanced translations not found.`;
+		throw error;
+	}
+
 	const responseObject = {
 		"API Infos": {
 			"Total Number Of Translations": translations.length,
