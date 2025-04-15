@@ -35,7 +35,7 @@ const getVersesFromOneChapter = async (req, res) => {
 	});
 	if (!chapterExists) {
 		const error = new Error(
-			`Chapter number ${chapterNumber} from book ${bookExists.id} not found`,
+			`Chapter number ${chapterNumber} from book : ${bookExists.id} not found`,
 		);
 		error.status = 404;
 		throw error;
@@ -48,7 +48,7 @@ const getVersesFromOneChapter = async (req, res) => {
 	});
 	if (!bookInTranslation) {
 		const error = new Error(
-			`Book with ID ${bookExists.id} not found in translation ${translationExists.name}`,
+			`Book with ID : ${bookExists.id} not found in translation : ${translationExists.name}`,
 		);
 		error.status = 404;
 		throw error;

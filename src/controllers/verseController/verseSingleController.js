@@ -19,7 +19,7 @@ const getSingleVerse = async (req, res) => {
 	if (!translation) {
 		const error = new Error("Translation not found");
 		error.status = 404;
-		error.details = `Translation not found for code ${translationCode}.`;
+		error.details = `Translation not found for code : ${translationCode}.`;
 		throw error;
 	}
 
@@ -49,14 +49,14 @@ const getSingleVerse = async (req, res) => {
 	if (!chapter) {
 		const error = new Error("Chapter not found");
 		error.status = 404;
-		error.details = `Chapter not found for book ${book.id} and chapter ${chapterNumber} in translation : ${translation.name}.`;
+		error.details = `Chapter not found for book : ${book.id} and chapter : ${chapterNumber} in translation : ${translation.name}.`;
 		throw error;
 	}
 
 	if (!bookTranslation) {
 		const error = new Error("Book translation not found");
 		error.status = 404;
-		error.details = `Book translation not found for book ${book.id} in translation : ${translation.name}.`;
+		error.details = `Book translation not found for book : ${book.id} in translation : ${translation.name}.`;
 		throw error;
 	}
 
@@ -72,7 +72,7 @@ const getSingleVerse = async (req, res) => {
 	if (!verse) {
 		const error = new Error("Verse not found");
 		error.status = 404;
-		error.details = `Verse not found for book '${bookTranslation.name}', chapter ${chapterNumber}, verse ${verseNumber} in translation : ${translation.name}.`;
+		error.details = `Verse not found for book : ${bookTranslation.name}, chapter : ${chapterNumber} and verse : ${verseNumber} in translation : ${translation.name}.`;
 		throw error;
 	}
 

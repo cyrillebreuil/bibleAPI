@@ -29,12 +29,13 @@ const colors = {
 	green: "\x1b[32m",
 	blue: "\x1b[34m",
 	yellow: "\x1b[33m",
+	purple: "\x1b[35m",
 	reset: "\x1b[0m",
 };
 
 // Démarrage du serveur
 app.listen(process.env.PORT, () => {
 	console.log(
-		`${colors.green}📖${colors.blue} Bible API server running at ${colors.yellow}${url}:${port}${colors.reset}`,
+		`📖${colors.blue} Bible API server running at ${colors.purple}${url}:${port}${colors.reset}`,
 	);
 });
