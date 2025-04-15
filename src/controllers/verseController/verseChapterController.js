@@ -15,7 +15,7 @@ const getVersesFromOneChapter = async (req, res) => {
 	});
 	if (!chapterExists) {
 		const error = new Error(
-			`Chapter number ${chapterNumber} from book ${bookID} not found`,
+			`Chapter number ${chapterNumber} from book ${bookID.toUpperCase()} not found`,
 		);
 		error.status = 404;
 		throw error;
@@ -24,7 +24,9 @@ const getVersesFromOneChapter = async (req, res) => {
 		where: { id: bookID.toUpperCase() },
 	});
 	if (!bookExists) {
-		const error = new Error(`Book with ID ${bookID} not found`);
+		const error = new Error(
+			`Book with ID ${bookID.toUpperCase()} not found`,
+		);
 		error.status = 404;
 		throw error;
 	}
@@ -46,7 +48,7 @@ const getVersesFromOneChapter = async (req, res) => {
 	});
 	if (!bookInTranslation) {
 		const error = new Error(
-			`Book with ID ${bookID} not found in translation ${translationCode}`,
+			`Book with ID ${bookID.toUpperCase()} not found in translation ${translationCode}`,
 		);
 		error.status = 404;
 		throw error;
@@ -69,6 +71,13 @@ const getVersesFromOneChapter = async (req, res) => {
 		],
 		order: [["number", "ASC"]],
 	});
+	if (!versesFromOneChapter || versesFromOneChapter.length === 0) {
+		const error = new Error(
+			`No verses found for chapter ${chapterNumber} from book ${bookID.toUpperCase()} in translation ${translationCode.toUpperCase()}`,
+		);
+		error.status = 404;
+		throw error;
+	}
 	res.json(versesFromOneChapter);
 };
 
