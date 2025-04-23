@@ -1,4 +1,5 @@
 maybe i should use id in books ?
+need correction syndoal psalms
 
 ### Recherche et filtrage
 - **Recherche textuelle** : Permettre aux utilisateurs de rechercher des termes spécifiques à travers toutes les traductions ou une traduction spécifique

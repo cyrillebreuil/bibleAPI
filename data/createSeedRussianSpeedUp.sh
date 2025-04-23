@@ -4,7 +4,7 @@ output_file="seedRussianSynodal.sql"
 # Ouvrir le fichier de sortie
 echo "BEGIN;" > $output_file
 
-# Insérer les données dans la table "translations" avec le code RUSV
+# Insérer les données dans la table "translations"
 echo '
 INSERT INTO "translations" ("code", "name", "language", "languageCode", "regionCode") VALUES
 ('"'"'rusv'"'"', '"'"'Синодальный перевод'"'"', '"'"'Russian'"'"', '"'"'rus'"'"', '"'"'RU'"'"')
@@ -19,7 +19,7 @@ INSERT INTO "testamentTranslations" ("isNewTestament", "translationID", "name") 
 ON CONFLICT ("isNewTestament", "translationID") DO NOTHING;
 ' >> $output_file
 
-# Mapping des IDs de livres
+# Mapping des IDs de livres et noms
 declare -A book_id_map=(
 ["gn"]="GEN" ["ex"]="EXO" ["lv"]="LEV" ["nm"]="NUM" ["dt"]="DEU" ["js"]="JOS" ["jud"]="JDG" ["rt"]="RUT"
 ["1sm"]="1SA" ["2sm"]="2SA" ["1kgs"]="1KI" ["2kgs"]="2KI" ["1ch"]="1CH" ["2ch"]="2CH" ["ezr"]="EZR"
@@ -32,7 +32,6 @@ declare -A book_id_map=(
 ["3jo"]="3JN" ["jd"]="JUD" ["re"]="REV"
 )
 
-# Noms des livres en russe
 declare -A book_names=(
 ["GEN"]="Бытие" ["EXO"]="Исход" ["LEV"]="Левит" ["NUM"]="Числа" ["DEU"]="Второзаконие" ["JOS"]="Иисус Навин"
 ["JDG"]="Книга Судей" ["RUT"]="Руфь" ["1SA"]="1-я Царств" ["2SA"]="2-я Царств" ["1KI"]="3-я Царств"
@@ -48,122 +47,143 @@ declare -A book_names=(
 ["1JN"]="1-e Иоанна" ["2JN"]="2-e Иоанна" ["3JN"]="3-e Иоанна" ["JUD"]="Иуда" ["REV"]="Откровение"
 )
 
-# Télécharger toute la Bible en une seule requête
-echo "Téléchargement de l'intégralité de la Bible russe (RUSV)..."
-bible_url="https://raw.githubusercontent.com/MaatheusGois/bible/main/versions/ru/synodal.json"
-bible_response=$(curl -s "$bible_url")
+# Télécharger la Bible en une seule fois
+echo "Téléchargement de la Bible russe..."
+bible_json_file=$(mktemp)
+curl -s "https://raw.githubusercontent.com/MaatheusGois/bible/main/versions/ru/synodal.json" > "$bible_json_file"
 
-# Vérifier si la réponse est valide
-if [ -z "$bible_response" ]; then
-    echo "Error: Empty response for the Bible" >&2
+if [ ! -s "$bible_json_file" ]; then
+    echo "Error: Failed to download Bible data" >&2
     exit 1
 fi
 
-# Vérifier si la réponse est valide JSON
-if ! echo "$bible_response" | jq empty 2>/dev/null; then
-    echo "Error: Invalid JSON response" >&2
-    exit 1
-fi
+# Créer temporairement la base de mapping JSON pour jq
+cat > /tmp/book_mapping.json << EOF
+{
+  "gn": "GEN", "ex": "EXO", "lv": "LEV", "nm": "NUM", "dt": "DEU", "js": "JOS", "jud": "JDG", "rt": "RUT",
+  "1sm": "1SA", "2sm": "2SA", "1kgs": "1KI", "2kgs": "2KI", "1ch": "1CH", "2ch": "2CH", "ezr": "EZR",
+  "ne": "NEH", "et": "EST", "job": "JOB", "ps": "PSA", "prv": "PRO", "ec": "ECC", "so": "SNG", "is": "ISA",
+  "jr": "JER", "lm": "LAM", "ez": "EZK", "dn": "DAN", "ho": "HOS", "jl": "JOL", "am": "AMO", "ob": "OBA",
+  "jn": "JON", "mi": "MIC", "na": "NAM", "hk": "HAB", "zp": "ZEP", "hg": "HAG", "zc": "ZEC", "ml": "MAL",
+  "mt": "MAT", "mk": "MRK", "lk": "LUK", "jo": "JHN", "act": "ACT", "rm": "ROM", "1co": "1CO", "2co": "2CO",
+  "gl": "GAL", "eph": "EPH", "ph": "PHP", "cl": "COL", "1ts": "1TH", "2ts": "2TH", "1tm": "1TI", "2tm": "2TI",
+  "tt": "TIT", "phm": "PHM", "hb": "HEB", "jm": "JAS", "1pe": "1PE", "2pe": "2PE", "1jo": "1JN", "2jo": "2JN",
+  "3jo": "3JN", "jd": "JUD", "re": "REV"
+}
+EOF
 
-# Insérer les traductions des livres en une seule requête
-echo "Préparation des insertions des traductions de livres..."
-book_translations_sql=""
+cat > /tmp/book_names.json << EOF
+{
+  "GEN": "Бытие", "EXO": "Исход", "LEV": "Левит", "NUM": "Числа", "DEU": "Второзаконие", "JOS": "Иисус Навин",
+  "JDG": "Книга Судей", "RUT": "Руфь", "1SA": "1-я Царств", "2SA": "2-я Царств", "1KI": "3-я Царств",
+  "2KI": "4-я Царств", "1CH": "1-я Паралипоменон", "2CH": "2-я Паралипоменон", "EZR": "Ездра", "NEH": "Неемия",
+  "EST": "Есфирь", "JOB": "Иов", "PSA": "Псалтирь", "PRO": "Притчи", "ECC": "Екклесиаст", "SNG": "Песни Песней",
+  "ISA": "Исаия", "JER": "Иеремия", "LAM": "Плач Иеремии", "EZK": "Иезекииль", "DAN": "Даниил", "HOS": "Осия",
+  "JOL": "Иоиль", "AMO": "Амос", "OBA": "Авдия", "JON": "Иона", "MIC": "Михей", "NAM": "Наум", "HAB": "Аввакум",
+  "ZEP": "Софония", "HAG": "Аггей", "ZEC": "Захария", "MAL": "Малахия", "MAT": "От Матфея", "MRK": "От Марка",
+  "LUK": "От Луки", "JHN": "От Иоанна", "ACT": "Деяния", "ROM": "К Римлянам", "1CO": "1-е Коринфянам",
+  "2CO": "2-е Коринфянам", "GAL": "К Галатам", "EPH": "К Ефесянам", "PHP": "К Филиппийцам", "COL": "К Колоссянам",
+  "1TH": "1-е Фессалоникийцам", "2TH": "2-е Фессалоникийцам", "1TI": "1-е Тимофею", "2TI": "2-е Тимофею",
+  "TIT": "К Титу", "PHM": "К Филимону", "HEB": "К Евреям", "JAS": "Иакова", "1PE": "1-e Петра", "2PE": "2-e Петра",
+  "1JN": "1-e Иоанна", "2JN": "2-e Иоанна", "3JN": "3-e Иоанна", "JUD": "Иуда", "REV": "Откровение"
+}
+EOF
 
-# Traiter tous les livres
-echo "$bible_response" | jq -r '.[] | @base64' | while read -r book_b64; do
-    book=$(echo "$book_b64" | base64 --decode)
-    api_book_id=$(echo "$book" | jq -r '.id')
+# Extraction et traitement des données de livre
+echo "Extraction des données des livres..."
+echo 'INSERT INTO "bookTranslations" ("bookID", "translationID", "name") VALUES' >> $output_file
 
+first_book=true
+jq -r '.[] | .id' "$bible_json_file" | while read -r api_book_id; do
     # Vérifier si le mapping existe
     db_book_id=${book_id_map[$api_book_id]}
     if [ -z "$db_book_id" ]; then
-        echo "Warning: No mapping found for book ID $api_book_id. Skipping." >&2
         continue
     fi
 
     # Obtenir le nom russe du livre
     book_name=${book_names[$db_book_id]}
-    echo "Processing book: $book_name ($db_book_id)"
 
-    # Ajouter à la requête d'insertion
-    book_translations_sql="${book_translations_sql}('$db_book_id', (SELECT \"id\" FROM \"translations\" WHERE \"code\" = 'rusv'), '$book_name'),\n"
-
-    # Préparer les insertions de versets
-    chapters_json=$(echo "$book" | jq -c '.chapters')
-    chapters_count=$(echo "$book" | jq '.chapters | length')
-
-    echo "Book $db_book_id has $chapters_count chapters"
-
-    # Traiter les chapitres et versets en groupes pour optimiser les insertions
-    verse_insert_batch=""
-    verse_count=0
-
-    for ((chapter_index=0; chapter_index<chapters_count; chapter_index++)); do
-        chapter_number=$((chapter_index + 1))
-        verses_array=$(echo "$book" | jq -r --arg idx "$chapter_index" '.chapters[$idx|tonumber] | @base64')
-
-        # Extraire la liste des versets
-        verses_list=$(echo "$verses_array" | base64 --decode | jq -r '.[] | @base64')
-
-        verse_number=1
-        echo "$verses_list" | while read -r verse_b64; do
-            # Extraire et nettoyer le texte du verset
-            verse_text=$(echo "$verse_b64" | base64 --decode)
-            verse_text=$(echo "$verse_text" | tr '\n\r' ' ' | sed -e 's/  */ /g' | sed -e 's/^ //' -e 's/ $//')
-            verse_text="${verse_text//\'/\'\'}"
-
-            # Ajouter à la requête d'insertion par lots
-            verse_insert_batch="${verse_insert_batch}((SELECT \"id\" FROM \"chapters\" WHERE \"bookID\" = '$db_book_id' AND \"number\" = $chapter_number), (SELECT \"id\" FROM \"translations\" WHERE \"code\" = 'rusv'), $verse_number, '$verse_text'),\n"
-
-            verse_count=$((verse_count + 1))
-            verse_number=$((verse_number + 1))
-
-            # Écrire par lots de 100 versets
-            if [ $verse_count -ge 100 ]; then
-                # Enlever la dernière virgule
-                verse_insert_batch="${verse_insert_batch%,\n}"
-
-                # Écrire le lot dans le fichier
-                echo "
-                INSERT INTO \"verses\" (\"chapterID\", \"translationID\", \"number\", \"text\") VALUES
-                $verse_insert_batch
-                ON CONFLICT (\"chapterID\", \"translationID\", \"number\") DO NOTHING;
-                " >> $output_file
-
-                verse_insert_batch=""
-                verse_count=0
-            fi
-        done
-
-        echo "Processed chapter $chapter_number"
-    done
-
-    # Écrire le dernier lot s'il en reste
-    if [ -n "$verse_insert_batch" ]; then
-        # Enlever la dernière virgule
-        verse_insert_batch="${verse_insert_batch%,\n}"
-
-        # Écrire le lot dans le fichier
-        echo "
-        INSERT INTO \"verses\" (\"chapterID\", \"translationID\", \"number\", \"text\") VALUES
-        $verse_insert_batch
-        ON CONFLICT (\"chapterID\", \"translationID\", \"number\") DO NOTHING;
-        " >> $output_file
+    # Ajouter la virgule si ce n'est pas le premier livre
+    if $first_book; then
+        first_book=false
+    else
+        echo "," >> $output_file
     fi
+
+    echo "('$db_book_id', (SELECT \"id\" FROM \"translations\" WHERE \"code\" = 'rusv'), '$book_name')" >> $output_file
 done
 
-# Finaliser l'insertion des traductions de livres
-if [ -n "$book_translations_sql" ]; then
-    # Enlever la dernière virgule
-    book_translations_sql="${book_translations_sql%,\n}"
+echo 'ON CONFLICT ("bookID", "translationID") DO NOTHING;' >> $output_file
 
-    echo "
-    INSERT INTO \"bookTranslations\" (\"bookID\", \"translationID\", \"name\") VALUES
-    $book_translations_sql
-    ON CONFLICT (\"bookID\", \"translationID\") DO NOTHING;
-    " >> $output_file
-fi
+# Maintenant, créons une fonction qui traite un livre à la fois pour les versets
+process_book() {
+    local book_json=$1
+    local api_book_id=$(echo "$book_json" | jq -r '.id')
+    local db_book_id=${book_id_map[$api_book_id]}
+
+    # Vérifier si le mapping existe
+    if [ -z "$db_book_id" ]; then
+        return
+    fi
+
+    local book_name=${book_names[$db_book_id]}
+    echo "Processing book: $book_name ($db_book_id)"
+
+    # Obtenir le nombre de chapitres
+    local chapters_count=$(echo "$book_json" | jq '.chapters | length')
+
+    # Traiter chaque chapitre
+    for ((chapter_index=0; chapter_index<chapters_count; chapter_index++)); do
+        local chapter_number=$((chapter_index + 1))
+        echo "  Chapter $chapter_number"
+
+        # Extraire les versets du chapitre et générer une insertion par lot
+        local verses_json=$(echo "$book_json" | jq -c --arg idx "$chapter_index" '.chapters[$idx|tonumber]')
+        local verses_count=$(echo "$verses_json" | jq 'length')
+
+        if [ "$verses_count" -gt 0 ]; then
+            # Commencer l'insertion par lots pour ce chapitre
+            echo "INSERT INTO \"verses\" (\"chapterID\", \"translationID\", \"number\", \"text\") VALUES" >> $output_file
+
+            local first_verse=true
+
+            for ((verse_index=0; verse_index<verses_count; verse_index++)); do
+                local verse_number=$((verse_index + 1))
+                local verse_text=$(echo "$verses_json" | jq -r --arg idx "$verse_index" '.[$idx|tonumber]')
+
+                # Nettoyer et échapper le texte
+                verse_text=$(echo "$verse_text" | tr '\n\r' ' ' | sed -e 's/  */ /g' | sed -e 's/^ //' -e 's/ $//')
+                verse_text="${verse_text//\'/\'\'}"
+
+                # Ajouter une virgule si ce n'est pas le premier verset
+                if $first_verse; then
+                    first_verse=false
+                else
+                    echo "," >> $output_file
+                fi
+
+                # Écrire le verset
+                echo "((SELECT \"id\" FROM \"chapters\" WHERE \"bookID\" = '$db_book_id' AND \"number\" = $chapter_number),
+(SELECT \"id\" FROM \"translations\" WHERE \"code\" = 'rusv'),
+$verse_number, '$verse_text')" >> $output_file
+            done
+
+            # Terminer l'insertion par lots
+            echo "ON CONFLICT (\"chapterID\", \"translationID\", \"number\") DO NOTHING;" >> $output_file
+        fi
+    done
+}
+
+# Traiter les livres un par un, mais beaucoup plus efficacement
+echo "Traitement des versets..."
+jq -c '.[]' "$bible_json_file" | while read -r book_json; do
+    process_book "$book_json"
+done
 
 echo "COMMIT;" >> $output_file
+
+# Nettoyer les fichiers temporaires
+rm -f "$bible_json_file" /tmp/book_mapping.json /tmp/book_names.json
 
 echo "Fichier SQL généré : $output_file"
