@@ -4,6 +4,7 @@ import {
 	BookTranslation,
 	Book,
 	TestamentTranslation,
+	Verse,
 } from "../../models/Associations.js";
 
 const getAllChaptersFromBook = async (req, res) => {
@@ -39,7 +40,23 @@ const getAllChaptersFromBook = async (req, res) => {
 				attributes: ["number", "bookID"],
 				order: [["number", "ASC"]],
 			}),
-			Chapter.count({ where: { bookID: bookID.toUpperCase() } }),
+			Chapter.count({
+				distinct: true,
+				include: [
+					{
+						model: Verse,
+						as: "verses",
+						required: true,
+						where: {
+							translationID: translation.id,
+						},
+						attributes: [],
+					},
+				],
+				where: {
+					bookID: bookID.toUpperCase(),
+				},
+			}),
 			BookTranslation.findOne({
 				where: {
 					bookID: bookID.toUpperCase(),
