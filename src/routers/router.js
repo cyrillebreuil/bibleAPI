@@ -10,12 +10,12 @@ import { logRouter } from "./logRouter.js";
 
 const router = Router();
 
+router.use(logRouter);
 router.use(searchRouter);
 router.use(translationRouter);
 router.use(verseRouter);
 router.use(bookRouter);
 router.use(chapterRouter);
 router.use(authRouter);
-router.use(logRouter);
 
 export { router };

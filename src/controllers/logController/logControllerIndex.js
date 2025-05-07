@@ -44,7 +44,7 @@ const getLogs = async (req, res) => {
 	// Exécuter la requête
 	const { count, rows } = await Log.findAndCountAll({
 		where: whereConditions,
-		order: [["timestamp", "DESC"]],
+		order: [["createdAt", "DESC"]],
 		limit,
 		offset,
 	});
