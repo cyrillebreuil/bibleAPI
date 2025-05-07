@@ -14,6 +14,9 @@ import { globalLimiter } from "./src/middlewares/rateLimiter.js";
 import { router } from "./src/routers/router.js";
 import { notFound, errorHandler } from "./src/middlewares/errorHandlers.js";
 
+//Cron geoIP
+import { geoIPUpdateService } from "./src/services/geoIPUpdate.js";
+
 // Initialisation
 const app = express();
 

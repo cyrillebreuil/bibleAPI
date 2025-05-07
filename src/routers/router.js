@@ -7,10 +7,12 @@ import { chapterRouter } from "./chapterRouter.js";
 import { searchRouter } from "./searchRouter.js";
 import { authRouter } from "./authRouter.js";
 import { logRouter } from "./logRouter.js";
+import { geoRouter } from "./geoRouter.js";
 
 const router = Router();
 
 router.use(logRouter);
+router.use(geoRouter);
 router.use(searchRouter);
 router.use(translationRouter);
 router.use(verseRouter);
