@@ -35,7 +35,7 @@ const createLimiter = (options) => {
 // Limiteur global
 const globalLimiter = createLimiter({
 	windowMs: 15 * 60 * 1000,
-	max: 100,
+	max: 300,
 	message: "Too many requests. Please try again later.",
 	details: "Our service is free but we need to ensure fair usage for all.",
 });
