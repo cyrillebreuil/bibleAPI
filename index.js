@@ -17,6 +17,9 @@ import { notFound, errorHandler } from "./src/middlewares/errorHandlers.js";
 // Initialisation
 const app = express();
 
+//Middleware pour analyser le JSON
+app.use(express.json());
+
 // Middleware de limitation des requêtes
 app.use(globalLimiter);
 
