@@ -50,7 +50,7 @@ const searchLimiter = createLimiter({
 
 const loginLimiter = createLimiter({
 	windowsMs: 15 * 60 * 1000,
-	max: 5,
+	max: 10,
 	message: "Too many login requests, please try again later.",
 	details: "Login operations are limited to preserve security.",
 });
