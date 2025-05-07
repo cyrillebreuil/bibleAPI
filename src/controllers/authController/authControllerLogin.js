@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../../models/User.js"; // Correction du chemin et de l'import
+import { User } from "../../models/Associations.js"; // Correction du chemin et de l'import
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // À mettre en variable d'environnement
 

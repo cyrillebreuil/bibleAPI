@@ -5,6 +5,7 @@ import { TestamentTranslation } from "./TestamentTranslation.js";
 import { BookTranslation } from "./BookTranslation.js";
 import { Verse } from "./Verse.js";
 import { User } from "./User.js";
+import { Log } from "./Log.js";
 
 import { sequelize } from "../database/connection.js";
 
@@ -65,5 +66,6 @@ export {
 	BookTranslation,
 	Verse,
 	User,
+	Log,
 	sequelize,
 };

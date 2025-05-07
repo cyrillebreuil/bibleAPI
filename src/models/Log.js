@@ -1,34 +1,35 @@
 import { sequelize } from "../database/connection.js";
 import { DataTypes, Model } from "sequelize";
 
-class User extends Model {}
+class Log extends Model {}
 
-User.init(
+Log.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
-			primaryKey: true,
 			autoIncrement: true,
+			primaryKey: true,
 		},
-		username: {
+		userId: {
 			type: DataTypes.STRING,
 			allowNull: false,
-			unique: true,
+			defaultValue: "anonymous",
 		},
-		password: {
+		action: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		role: {
-			type: DataTypes.ENUM("admin", "user"),
-			defaultValue: "user",
-		},
+		path: DataTypes.STRING,
+		ipAddress: DataTypes.STRING,
+		userAgent: DataTypes.TEXT,
+		details: DataTypes.JSONB,
 	},
 	{
 		sequelize,
-		tableName: "users",
+		tableName: "logs",
 		timestamps: true,
+		updatedAt: false,
 	},
 );
 
-export { User };
+export { Log };
