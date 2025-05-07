@@ -3,31 +3,31 @@ import rateLimit from "express-rate-limit";
 // Configuration de base du limiteur
 const createLimiter = (options) => {
 	return rateLimit({
-		windowMs: options.windowMs || 15 * 60 * 1000, // 15 minutes par défaut
-		max: options.max || 100, // 100 requêtes par défaut
+		windowMs: options.windowMs || 15 * 60 * 1000,
+		max: options.max || 100,
 		standardHeaders: true,
 		legacyHeaders: false,
-		// Utiliser le handler personnalisé au lieu du message
 		handler: (req, res, next, options) => {
-			// Créer une erreur dans le format que votre middleware catchErrors attend
 			const error = new Error(
 				options.message || "Too many requests. Please try again later.",
 			);
-			error.status = 429; // Status code standard pour rate limiting
+			error.status = 429;
 			error.details =
 				options.details ||
 				"Our service is free but we need to ensure fair usage for all.";
-
-			// Passer l'erreur au middleware suivant (qui sera votre errorHandler)
 			next(error);
 		},
-		skip: (req) => {
-			// Ignorer les requêtes locales (environnement de développement)
-			return (
-				req.ip === "::1" ||
-				req.ip === "127.0.0.1" ||
-				req.ip === "::ffff:127.0.0.1"
-			);
+		// Utiliser la même logique que votre logEnricher
+		keyGenerator: (req) => {
+			let clientIp =
+				req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+			// Si x-forwarded-for contient plusieurs IPs, prendre la première
+			if (clientIp && clientIp.includes(",")) {
+				clientIp = clientIp.split(",")[0].trim();
+			}
+
+			return clientIp;
 		},
 	});
 };
