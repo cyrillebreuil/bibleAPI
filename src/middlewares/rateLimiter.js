@@ -48,4 +48,11 @@ const searchLimiter = createLimiter({
 	details: "Search operations are limited to preserve server resources.",
 });
 
-export { globalLimiter, searchLimiter };
+const loginLimiter = createLimiter({
+	windowsMs: 15 * 60 * 1000,
+	max: 5,
+	message: "Too many login requests, please try again later.",
+	details: "Login operations are limited to preserve security.",
+});
+
+export { globalLimiter, searchLimiter, loginLimiter };
