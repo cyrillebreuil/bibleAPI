@@ -6,8 +6,13 @@ import { BookTranslation } from "./BookTranslation.js";
 import { Verse } from "./Verse.js";
 import { User } from "./User.js";
 import { Log } from "./Log.js";
+import { Favorite } from "./Favorite.js";
 
 import { sequelize } from "../database/connection.js";
+
+//Favoris
+User.hasMany(Favorite, { foreignKey: "userId", as: "favorites" });
+Favorite.belongsTo(User, { foreignKey: "userId", as: "user" });
 
 // Book associations
 Book.hasMany(Chapter, { foreignKey: "bookID", as: "chapters" });
@@ -67,5 +72,6 @@ export {
 	Verse,
 	User,
 	Log,
+	Favorite,
 	sequelize,
 };

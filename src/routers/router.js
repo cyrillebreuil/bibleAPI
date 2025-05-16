@@ -8,6 +8,7 @@ import { searchRouter } from "./searchRouter.js";
 import { authRouter } from "./authRouter.js";
 import { logRouter } from "./logRouter.js";
 import { geoRouter } from "./geoRouter.js";
+import { favoriteRouter } from "./favoriteRouter.js";
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use(verseRouter);
 router.use(bookRouter);
 router.use(chapterRouter);
 router.use(authRouter);
+router.use(favoriteRouter);
 
 export { router };
