@@ -15,11 +15,11 @@ const router = Router();
 router.use(logRouter);
 router.use(geoRouter);
 router.use(searchRouter);
+router.use(favoriteRouter);
 router.use(translationRouter);
 router.use(verseRouter);
 router.use(bookRouter);
 router.use(chapterRouter);
 router.use(authRouter);
-router.use(favoriteRouter);
 
 export { router };
