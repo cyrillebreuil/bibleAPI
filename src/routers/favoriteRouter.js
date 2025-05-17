@@ -7,7 +7,7 @@ import { verifyUser } from "../middlewares/isUser.js";
 const favoriteRouter = Router();
 
 favoriteRouter.post(
-	"/favorites/:translationCode/:bookID/:chapterID",
+	"/favorites",
 	catchErrors(verifyUser),
 	catchErrors(favoriteController.addFavorite),
 );
@@ -19,7 +19,7 @@ favoriteRouter.get(
 );
 
 favoriteRouter.delete(
-	"/favorites/:translationCode/:bookID/:chapterID",
+	"/favorites",
 	catchErrors(verifyUser),
 	catchErrors(favoriteController.deleteFavorite),
 );
