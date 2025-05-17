@@ -11,6 +11,23 @@ const listFavorites = async (req, res) => {
 
 	const favorites = await Favorite.findAll({
 		where: { userId },
+		include: [
+			{
+				model: Book,
+				as: "book",
+				attributes: ["id"],
+			},
+			{
+				model: Chapter,
+				as: "chapter",
+				attributes: ["id", "number"],
+			},
+			{
+				model: Verse,
+				as: "verse",
+				attributes: ["id", "text"],
+			},
+		],
 	});
 
 	if (!favorites || favorites.length === 0) {
