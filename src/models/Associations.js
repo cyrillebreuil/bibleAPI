@@ -13,6 +13,9 @@ import { sequelize } from "../database/connection.js";
 //Favoris
 User.hasMany(Favorite, { foreignKey: "userId", as: "favorites" });
 Favorite.belongsTo(User, { foreignKey: "userId", as: "user" });
+Favorite.belongsTo(Book, { foreignKey: "bookID", as: "book" });
+Favorite.belongsTo(Chapter, { foreignKey: "chapterID", as: "chapter" });
+Favorite.belongsTo(Verse, { foreignKey: "verseID", as: "verse" });
 
 // Book associations
 Book.hasMany(Chapter, { foreignKey: "bookID", as: "chapters" });
